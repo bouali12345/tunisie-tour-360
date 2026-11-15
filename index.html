@@ -65,7 +65,7 @@ footer{background:var(--navy);color:white;text-align:center;padding:22px 12px;ma
 </header>
 
 <main>
-  <!-- لوحة تحكم Pi Network (الدفع والإعلانات) -->
+  <!-- لوحة تحكم Pi Network -->
   <section class="pi-panel">
     <div class="pi-status" id="piUserStatus">مرحباً بك أيها الرائد! سجل الدخول لتفعيل ميزات Pi.</div>
     <div class="pi-actions">
@@ -110,7 +110,6 @@ footer{background:var(--navy);color:white;text-align:center;padding:22px 12px;ma
 </footer>
 
 <script>
-// 1. تهيئة Pi SDK (اجعل sandbox: false عند النشر الرسمي على Mainnet)
 let piUser = null;
 let isVip = false;
 
@@ -120,7 +119,6 @@ try {
   console.log("Pi SDK يعمل داخل Pi Browser فقط");
 }
 
-// تسجيل الدخول بحساب Pi
 async function loginWithPi() {
   try {
     const scopes = ['username', 'payments'];
@@ -134,10 +132,9 @@ async function loginWithPi() {
 }
 
 function onIncompletePaymentFound(payment) {
-  console.log("تم العثور على معاملة غير مكتملة:", payment);
+  console.log("معاملة غير مكتملة:", payment);
 }
 
-// 2. نظام الإعلانات (Pi Ad Network - Rewarded Ad)
 async function showRewardedAd() {
   try {
     const isAdReadyResponse = await Pi.Ads.isAdReady("rewarded");
@@ -153,7 +150,6 @@ async function showRewardedAd() {
   }
 }
 
-// 3. نظام الدفع بعملة Pi (Pi Payments)
 async function unlockVipGuide() {
   if (!piUser) {
     await loginWithPi();
@@ -165,27 +161,23 @@ async function unlockVipGuide() {
       memo: "ترقية الدليل السياحي الشامل - Tunisie Tour 360",
       metadata: { feature: "vip_guide" }
     }, {
-      onReadyForServerApproval: function(paymentId) {
-        console.log("Ready for server approval:", paymentId);
-      },
+      onReadyForServerApproval: function(paymentId) {},
       onReadyForServerCompletion: function(paymentId, txid) {
         isVip = true;
         document.getElementById("vipBtn").style.display = "none";
         document.getElementById("piUserStatus").innerHTML = "@" + piUser.username + '<span class="vip-badge">VIP 360</span>';
         alert(lang === "ar" ? "تم الدفع بنجاح! تم تفعيل عضوية VIP." : "Payment successful! VIP unlocked.");
       },
-      onCancel: function(paymentId) { console.log("Payment cancelled"); },
-      onError: function(error, payment) { console.error("Payment error", error); }
+      onCancel: function(paymentId) {},
+      onError: function(error, payment) {}
     });
   } catch (err) {
     alert(lang === "ar" ? "يرجى فتح التطبيق في Pi Browser لإتمام الدفع." : "Open in Pi Browser to pay with Pi.");
   }
 }
 
-// البيانات الأساسية
 const govs=["تونس","أريانة","بن عروس","منوبة","نابل","زغوان","بنزرت","باجة","جندوبة","الكاف","سليانة","سوسة","المنستير","المهدية","صفاقس","القيروان","القصرين","سيدي بوزيد","قابس","مدنين","تطاوين","قفصة","توزر","قبلي"];
 
-// صور حقيقية مرخصة من ويكيميديا كومنز (Wikimedia Commons)
 const places=[
 {name:"قرطاج",gov:"تونس",cat:"history",desc:"موقع أثري مهم من تاريخ الحضارة القرطاجية.",map:"Carthage Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Antonine_Baths_Carthage_2014.jpg/640px-Antonine_Baths_Carthage_2014.jpg"},
 {name:"سيدي بوسعيد",gov:"تونس",cat:"city",desc:"قرية ساحلية تشتهر بالبيوت البيضاء والأبواب الزرقاء.",map:"Sidi Bou Said Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Sidi_Bou_Said_Tunisia.jpg/640px-Sidi_Bou_Said_Tunisia.jpg"},
@@ -214,7 +206,6 @@ const places=[
 {name:"شط الجريد",gov:"قبلي",cat:"nature",desc:"سبخة واسعة ذات مشاهد صحراوية مميزة.",map:"Chott el Jerid Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Chott_el_Djerid_Tunisia.jpg/640px-Chott_el_Djerid_Tunisia.jpg"}
 ];
 
-// الفنادق والمطاعم
 const hotels=[
 {name:"La Villa Bleue",gov:"تونس",phone:"+216 71 742 000",address:"68 rue Kennedy, Sidi Bou Saïd",website:"https://www.lavillableuesidbousaid.com",map:"La Villa Bleue Sidi Bou Said Tunisia",icon:"🏨"},
 {name:"Dar Said",gov:"تونس",phone:"+216 71 729 666",address:"Rue Toumi, Sidi Bou Saïd",website:"",map:"Dar Said Sidi Bou Said Tunisia",icon:"🏨"},
@@ -241,10 +232,13 @@ en:{tag:"Your Tunisia travel guide on Pi Network",welcome:"Discover Tunisia, gov
 
 let lang="ar",section="places";
 function T(){return words[lang]}
+
 function setLang(l){
   lang=l;
   document.documentElement.lang=l;
   document.documentElement.dir=l==="ar"?"rtl":"ltr";
+  
+  // تحديث النصوص العامة في الواجهة
   document.getElementById("tagline").textContent=T().tag;
   document.getElementById("welcome").textContent=T().welcome;
   document.getElementById("introText").textContent=T().intro;
@@ -252,29 +246,43 @@ function setLang(l){
   document.getElementById("dataTitle").textContent=T().dataTitle;
   document.getElementById("dataText").textContent=T().dataText;
   document.getElementById("footerText").textContent=T().footer;
+  
   if(!piUser) document.getElementById("piLoginBtn").textContent=T().loginBtn;
   document.getElementById("watchAdBtn").textContent=T().adBtn;
   document.getElementById("vipBtn").textContent=T().vipBtn;
-  fillFilters();render();
+
+  // تحديث تسميات أزرار التبويبات العلوية فوراً
+  document.getElementById("tabPlaces").textContent=T().places;
+  document.getElementById("tabHotels").textContent=T().hotels;
+  document.getElementById("tabRestaurants").textContent=T().restaurants;
+
+  fillFilters();
+  render();
 }
+
 function setSection(s){
   section=s;
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
   document.getElementById(s==="places"?"tabPlaces":s==="hotels"?"tabHotels":"tabRestaurants").classList.add("active");
-  fillFilters();render();
+  fillFilters();
+  render();
 }
+
 function fillFilters(){
   let g=document.getElementById("gov"),c=document.getElementById("cat"),oldg=g.value,oldc=c.value;
   g.innerHTML="";
   let o=document.createElement("option");o.value="";o.textContent=T().allGov;g.appendChild(o);
   govs.forEach(x=>{let a=document.createElement("option");a.value=x;a.textContent=x;g.appendChild(a)});
   g.value=oldg;
+  
   c.innerHTML="";
   let cats=section==="places"?[["",T().allCat],["beach",T().beach],["history",T().history],["nature",T().nature],["city",T().city]]:[["",T().allCat]];
   cats.forEach(([v,n])=>{let a=document.createElement("option");a.value=v;a.textContent=n;c.appendChild(a)});
   c.value=oldc;
+  
   document.getElementById("sectionTitle").textContent=T()[section];
 }
+
 function render(){
   let data=section==="places"?places:section==="hotels"?hotels:restaurants;
   let q=document.getElementById("search").value.trim().toLocaleLowerCase(),g=document.getElementById("gov").value,c=document.getElementById("cat").value;
@@ -307,12 +315,15 @@ function render(){
     body.append(topDiv,actions);card.appendChild(body);root.appendChild(card);
   });
 }
+
 function createPlaceholder(gov, icon){
   let div=document.createElement("div");div.className="card-placeholder";
   div.innerHTML=`<div>${icon}</div><span>${gov}</span>`;
   return div;
 }
-fillFilters();render();
+
+fillFilters();
+render();
 </script>
 </body>
 </html>
