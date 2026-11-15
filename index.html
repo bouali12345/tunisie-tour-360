@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#073b5c">
+<title>TUNISIE TOUR 360 - Pi Network</title>
+<script src="https://sdk.minepi.com/pi-sdk.js"></script>
+<style>
+:root{--navy:#073b5c;--blue:#087e9c;--gold:#e8ad45;--paper:#f3f7fa;--ink:#183247}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Tahoma,sans-serif;background:var(--paper);color:var(--ink)}
+header{background:linear-gradient(130deg,var(--navy),var(--blue));color:#fff;text-align:center;padding:24px 15px}
+header h1{font-size:clamp(24px,5vw,34px);margin:6px 0}
+header p{line-height:1.6;margin:4px 0 12px}
+.top-bar{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+button{font:inherit;cursor:pointer;border:0;border-radius:9px;padding:10px 14px;font-weight:bold;transition:opacity 0.2s}
+button:hover{opacity:0.9}
+.langs button{background:#fff;color:var(--navy);padding:7px 12px;font-size:14px}
+.pi-btn{background:var(--gold);color:#183247;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.pi-ad-btn{background:#2c3e50;color:#fff;border:1px solid var(--gold)}
+main{max-width:1150px;margin:auto;padding:16px}
+.pi-panel{background:linear-gradient(to right,#fffdf7,#fff);border:1px solid var(--gold);padding:14px;border-radius:13px;margin:14px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.pi-status{font-size:14px;color:var(--navy);font-weight:bold}
+.pi-actions{display:flex;gap:8px;flex-wrap:wrap}
+.intro,.notice{background:#fff;padding:16px;border-radius:13px;margin:14px 0;line-height:1.8}
+h2{color:var(--navy);font-size:21px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.tabs button{background:#dceaf0;color:var(--navy)}
+.tabs button.active{background:var(--gold);color:#24384a}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:12px 0 20px}
+input,select{font:inherit;width:100%;padding:12px;border:1px solid #cbd6df;border-radius:9px;background:#fff;min-height:45px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:15px}
+.card{background:#fff;border:1px solid #e4ebf0;border-radius:14px;overflow:hidden;box-shadow:0 3px 13px #1832470a;display:flex;flex-direction:column}
+.card img{width:100%;height:165px;object-fit:cover;background:#dce8ed;display:block}
+.card-placeholder{width:100%;height:120px;background:linear-gradient(135deg,#073b5c,#087e9c);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:32px;gap:5px}
+.card-placeholder span{font-size:13px;opacity:0.9}
+.card-body{padding:15px;flex:1;display:flex;flex-direction:column;justify-content:space-between}
+.card h3{margin:5px 0 8px;color:var(--navy)}
+.card p{color:#526779;line-height:1.65;margin:6px 0;font-size:14px}
+.small{font-size:13px;color:#a16b16;font-weight:bold}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.link{display:inline-block;text-decoration:none;background:var(--blue);color:#fff;padding:8px 11px;border-radius:8px;font-size:13px}
+.call{background:#177245}
+.empty{background:#fff;border-radius:12px;padding:20px;text-align:center;color:#607487}
+.count{font-size:13px;color:#607487}
+.vip-badge{background:var(--gold);color:#183247;padding:3px 8px;border-radius:6px;font-size:12px;margin-inline-start:6px}
+footer{background:var(--navy);color:white;text-align:center;padding:22px 12px;margin-top:30px;line-height:1.8}
+@media(max-width:480px){main{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <div style="font-size:38px">🇹🇳 🌍</div>
+  <h1>TUNISIE TOUR 360</h1>
+  <p id="tagline">دليلك السياحي الشامل لاكتشاف تونس على شبكة Pi</p>
+  <div class="top-bar">
+    <div class="langs">
+      <button onclick="setLang('ar')">العربية</button>
+      <button onclick="setLang('fr')">Français</button>
+      <button onclick="setLang('en')">English</button>
+    </div>
+    <button id="piLoginBtn" class="pi-btn" onclick="loginWithPi()">π تسجيل الدخول بـ Pi</button>
+  </div>
+</header>
+
+<main>
+  <!-- لوحة تحكم Pi Network (الدفع والإعلانات) -->
+  <section class="pi-panel">
+    <div class="pi-status" id="piUserStatus">مرحباً بك أيها الرائد! سجل الدخول لتفعيل ميزات Pi.</div>
+    <div class="pi-actions">
+      <button id="watchAdBtn" class="pi-ad-btn" onclick="showRewardedAd()">📺 شاهد إعلاناً لدعم التطبيق</button>
+      <button id="vipBtn" class="pi-btn" onclick="unlockVipGuide()">⭐ فتح الدليل الشامل (1 Pi)</button>
+    </div>
+  </section>
+
+  <section class="intro">
+    <h2 id="welcome">اكتشف تونس ولاية بعد ولاية</h2>
+    <p id="introText">ابحث عن الوجهات السياحية والنزل والمطاعم. اضغط على زر الخريطة لمعرفة الموقع، أو اتصل بالنزل مباشرة.</p>
+  </section>
+
+  <div class="tabs">
+    <button id="tabPlaces" class="active" onclick="setSection('places')">الأماكن السياحية</button>
+    <button id="tabHotels" onclick="setSection('hotels')">النزل والفنادق</button>
+    <button id="tabRestaurants" onclick="setSection('restaurants')">المطاعم</button>
+  </div>
+
+  <div class="filters">
+    <input id="search" type="search" placeholder="ابحث بالاسم أو الولاية..." oninput="render()">
+    <select id="gov" onchange="render()"></select>
+    <select id="cat" onchange="render()"></select>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+    <h2 id="sectionTitle">الأماكن السياحية</h2>
+    <span class="count" id="count"></span>
+  </div>
+  <div class="grid" id="cards"></div>
+
+  <section class="notice">
+    <strong id="dataTitle">سياسة الخصوصية ودقة البيانات</strong>
+    <div id="dataText">يستخدم هذا التطبيق حزمة Pi SDK للمصادقة الآمنة وإتمام المعاملات بعملة Pi حصرياً. أرقام الاتصال مأخوذة من أدلة سياحية رسمية. الصور المعروضة للمعالم مرخصة من ويكيميديا كومنز.</div>
+    <p><a href="https://www.discovertunisia.com/en/tourist_information" target="_blank" rel="noopener">الدليل السياحي الرسمي Discover Tunisia</a></p>
+  </section>
+</main>
+
+<footer>
+  <strong>TUNISIE TOUR 360 - Pi Ecosystem</strong><br>
+  <span id="footerText">اكتشف تونس، ولاية بعد ولاية.</span><br>© 2026
+</footer>
+
+<script>
+// 1. تهيئة Pi SDK (اجعل sandbox: false عند النشر الرسمي على Mainnet)
+let piUser = null;
+let isVip = false;
+
+try {
+  Pi.init({ version: "2.0", sandbox: true });
+} catch (e) {
+  console.log("Pi SDK يعمل داخل Pi Browser فقط");
+}
+
+// تسجيل الدخول بحساب Pi
+async function loginWithPi() {
+  try {
+    const scopes = ['username', 'payments'];
+    const auth = await Pi.authenticate(scopes, onIncompletePaymentFound);
+    piUser = auth.user;
+    document.getElementById("piLoginBtn").textContent = "π @" + piUser.username;
+    document.getElementById("piUserStatus").textContent = (lang === "ar" ? "أهلاً بك @" : "Welcome @") + piUser.username + (isVip ? " ⭐ VIP" : "");
+  } catch (err) {
+    alert(lang === "ar" ? "يرجى فتح التطبيق داخل متصفح Pi Browser لتسجيل الدخول." : "Please open inside Pi Browser to login.");
+  }
+}
+
+function onIncompletePaymentFound(payment) {
+  console.log("تم العثور على معاملة غير مكتملة:", payment);
+}
+
+// 2. نظام الإعلانات (Pi Ad Network - Rewarded Ad)
+async function showRewardedAd() {
+  try {
+    const isAdReadyResponse = await Pi.Ads.isAdReady("rewarded");
+    if (!isAdReadyResponse.ready) {
+      await Pi.Ads.requestAd("rewarded");
+    }
+    const showAdResponse = await Pi.Ads.showAd("rewarded");
+    if (showAdResponse.result === "AD_REWARDED") {
+      alert(lang === "ar" ? "شكراً لمشاهدتك الإعلان! تم فتح النصائح السياحية الإضافية." : "Thank you for watching! Bonus travel tips unlocked.");
+    }
+  } catch (err) {
+    alert(lang === "ar" ? "الإعلانات تعمل بعد تفعيل Dev Ad Network داخل Pi Browser." : "Ads work inside Pi Browser after Dev Ad Network approval.");
+  }
+}
+
+// 3. نظام الدفع بعملة Pi (Pi Payments)
+async function unlockVipGuide() {
+  if (!piUser) {
+    await loginWithPi();
+    if (!piUser) return;
+  }
+  try {
+    await Pi.createPayment({
+      amount: 1,
+      memo: "ترقية الدليل السياحي الشامل - Tunisie Tour 360",
+      metadata: { feature: "vip_guide" }
+    }, {
+      onReadyForServerApproval: function(paymentId) {
+        console.log("Ready for server approval:", paymentId);
+      },
+      onReadyForServerCompletion: function(paymentId, txid) {
+        isVip = true;
+        document.getElementById("vipBtn").style.display = "none";
+        document.getElementById("piUserStatus").innerHTML = "@" + piUser.username + '<span class="vip-badge">VIP 360</span>';
+        alert(lang === "ar" ? "تم الدفع بنجاح! تم تفعيل عضوية VIP." : "Payment successful! VIP unlocked.");
+      },
+      onCancel: function(paymentId) { console.log("Payment cancelled"); },
+      onError: function(error, payment) { console.error("Payment error", error); }
+    });
+  } catch (err) {
+    alert(lang === "ar" ? "يرجى فتح التطبيق في Pi Browser لإتمام الدفع." : "Open in Pi Browser to pay with Pi.");
+  }
+}
+
+// البيانات الأساسية
+const govs=["تونس","أريانة","بن عروس","منوبة","نابل","زغوان","بنزرت","باجة","جندوبة","الكاف","سليانة","سوسة","المنستير","المهدية","صفاقس","القيروان","القصرين","سيدي بوزيد","قابس","مدنين","تطاوين","قفصة","توزر","قبلي"];
+
+// صور حقيقية مرخصة من ويكيميديا كومنز (Wikimedia Commons)
+const places=[
+{name:"قرطاج",gov:"تونس",cat:"history",desc:"موقع أثري مهم من تاريخ الحضارة القرطاجية.",map:"Carthage Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Antonine_Baths_Carthage_2014.jpg/640px-Antonine_Baths_Carthage_2014.jpg"},
+{name:"سيدي بوسعيد",gov:"تونس",cat:"city",desc:"قرية ساحلية تشتهر بالبيوت البيضاء والأبواب الزرقاء.",map:"Sidi Bou Said Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Sidi_Bou_Said_Tunisia.jpg/640px-Sidi_Bou_Said_Tunisia.jpg"},
+{name:"المدينة العتيقة بتونس",gov:"تونس",cat:"history",desc:"أسواق وأزقة ومعالم تاريخية في قلب العاصمة.",map:"Medina of Tunis",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c8/Zitouna_Mosque_Tunis.jpg/640px-Zitouna_Mosque_Tunis.jpg"},
+{name:"الحمامات",gov:"نابل",cat:"beach",desc:"وجهة ساحلية معروفة بشواطئها ومرافقها السياحية.",map:"Hammamet Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Hammamet_fort.jpg/640px-Hammamet_fort.jpg"},
+{name:"الهوارية",gov:"نابل",cat:"nature",desc:"منطقة ساحلية ذات مناظر طبيعية وكهوف بحرية.",map:"El Haouaria Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Grottes_El_Haouaria.jpg/640px-Grottes_El_Haouaria.jpg"},
+{name:"معبد المياه",gov:"زغوان",cat:"history",desc:"معلم أثري مرتبط بمنظومة المياه الرومانية القديمة.",map:"Temple des Eaux Zaghouan",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Temple_des_eaux_Zaghouan.jpg/640px-Temple_des_eaux_Zaghouan.jpg"},
+{name:"رأس إنجلة",gov:"بنزرت",cat:"nature",desc:"منطقة ساحلية عند أقصى شمال القارة الإفريقية.",map:"Cap Angela Bizerte",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Cap_Angela_Bizerte.jpg/640px-Cap_Angela_Bizerte.jpg"},
+{name:"غار الملح",gov:"بنزرت",cat:"beach",desc:"بلدة ساحلية ذات بحيرة وميناء ومشاهد طبيعية.",map:"Ghar El Melh Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Ghar_el_Melh_lagoon.jpg/640px-Ghar_el_Melh_lagoon.jpg"},
+{name:"عين دراهم",gov:"جندوبة",cat:"nature",desc:"وجهة جبلية تشتهر بالغابات والطبيعة.",map:"Ain Draham Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Ain_Draham_snow.jpg/640px-Ain_Draham_snow.jpg"},
+{name:"طبرقة",gov:"جندوبة",cat:"beach",desc:"مدينة ساحلية معروفة بمناظرها البحرية.",map:"Tabarka Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Les_Aiguilles_Tabarka.jpg/640px-Les_Aiguilles_Tabarka.jpg"},
+{name:"دقة",gov:"باجة",cat:"history",desc:"مدينة أثرية رومانية مدرجة ضمن التراث العالمي.",map:"Dougga Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Dougga_Capitol.jpg/640px-Dougga_Capitol.jpg"},
+{name:"القصبة",gov:"الكاف",cat:"history",desc:"حصن تاريخي يطل على مدينة الكاف.",map:"Kasbah Le Kef",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Kasbah_du_Kef.jpg/640px-Kasbah_du_Kef.jpg"},
+{name:"جبل السرج",gov:"سليانة",cat:"nature",desc:"منطقة جبلية طبيعية لمحبي المناظر والرحلات المنظمة.",map:"Jebel Serj Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Jebel_Serj.jpg/640px-Jebel_Serj.jpg"},
+{name:"المدينة العتيقة بسوسة",gov:"سوسة",cat:"history",desc:"مدينة تاريخية تضم أسواراً وأسواقاً ومعالم تقليدية.",map:"Medina of Sousse",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Ribat_of_Sousse.jpg/640px-Ribat_of_Sousse.jpg"},
+{name:"رباط المنستير",gov:"المنستير",cat:"history",desc:"معلم تاريخي بارز على الواجهة البحرية للمنستير.",map:"Ribat of Monastir",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Ribat_Monastir.jpg/640px-Ribat_Monastir.jpg"},
+{name:"الجم",gov:"المهدية",cat:"history",desc:"مدرج روماني أثري شهير.",map:"El Jem Amphitheatre",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Amphitheatre_of_El_Jem.jpg/640px-Amphitheatre_of_El_Jem.jpg"},
+{name:"جزيرة قرقنة",gov:"صفاقس",cat:"beach",desc:"جزر هادئة تتميز بالطبيعة البحرية.",map:"Kerkennah Islands",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Kerkennah_fishing.jpg/640px-Kerkennah_fishing.jpg"},
+{name:"جامع عقبة بن نافع",gov:"القيروان",cat:"history",desc:"من أبرز المعالم الإسلامية والتاريخية في تونس.",map:"Great Mosque of Kairouan",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Great_Mosque_of_Kairouan_Panorama.jpg/640px-Great_Mosque_of_Kairouan_Panorama.jpg"},
+{name:"سبيطلة",gov:"القصرين",cat:"history",desc:"موقع أثري يضم آثاراً رومانية وبيزنطية.",map:"Sbeitla Archaeological Site",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Sbeitla_Temples.jpg/640px-Sbeitla_Temples.jpg"},
+{name:"ماتماتا",gov:"قابس",cat:"city",desc:"منطقة معروفة بالمساكن التقليدية المحفورة في الأرض.",map:"Matmata Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Matmata_troglodyte.jpg/640px-Matmata_troglodyte.jpg"},
+{name:"جربة",gov:"مدنين",cat:"beach",desc:"جزيرة تجمع الشواطئ والتراث والأسواق.",map:"Djerba Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Djerba_Houmt_Souk.jpg/640px-Djerba_Houmt_Souk.jpg"},
+{name:"شنني",gov:"تطاوين",cat:"history",desc:"قرية جبلية ذات عمارة تقليدية ومشهد صحراوي.",map:"Chenini Tataouine",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Chenini_Tataouine.jpg/640px-Chenini_Tataouine.jpg"},
+{name:"متحف قفصة",gov:"قفصة",cat:"history",desc:"محطة للتعرف على التراث والآثار المحلية.",map:"Gafsa Museum Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Roman_Pools_Gafsa.jpg/640px-Roman_Pools_Gafsa.jpg"},
+{name:"شلالات تمغزة",gov:"توزر",cat:"nature",desc:"مناظر طبيعية وواحات وشلالات في منطقة الجريد.",map:"Tamerza Waterfalls Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Tamerza_waterfall.jpg/640px-Tamerza_waterfall.jpg"},
+{name:"شط الجريد",gov:"قبلي",cat:"nature",desc:"سبخة واسعة ذات مشاهد صحراوية مميزة.",map:"Chott el Jerid Tunisia",img:"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Chott_el_Djerid_Tunisia.jpg/640px-Chott_el_Djerid_Tunisia.jpg"}
+];
+
+// الفنادق والمطاعم
+const hotels=[
+{name:"La Villa Bleue",gov:"تونس",phone:"+216 71 742 000",address:"68 rue Kennedy, Sidi Bou Saïd",website:"https://www.lavillableuesidbousaid.com",map:"La Villa Bleue Sidi Bou Said Tunisia",icon:"🏨"},
+{name:"Dar Said",gov:"تونس",phone:"+216 71 729 666",address:"Rue Toumi, Sidi Bou Saïd",website:"",map:"Dar Said Sidi Bou Said Tunisia",icon:"🏨"},
+{name:"Le Palace Gammarth",gov:"تونس",phone:"+216 71 912 000",address:"Gammarth, Tunis",website:"https://www.lepalace.com.tn",map:"Le Palace Gammarth Tunisia",icon:"🏨"},
+{name:"Le Consul",gov:"تونس",phone:"+216 71 785 784",address:"48 Rue de Palestine, Tunis",website:"https://www.hotelleconsul.com",map:"Hotel Le Consul Tunis",icon:"🏨"},
+{name:"Marigold Hôtel",gov:"تونس",phone:"+216 71 904 011",address:"Angle rue Ibn Nadim & Chabia, Tunis",website:"https://www.marigold-hotel.com",map:"Marigold Hotel Tunis",icon:"🏨"},
+{name:"Hotel Lafayette Tunis",gov:"تونس",phone:"+216 71 892 224",address:"30 rue de Cologne, Tunis",website:"https://www.hotelafayette.com",map:"Hotel Lafayette Tunis",icon:"🏨"},
+{name:"Dar Boumakhlouf",gov:"الكاف",phone:"+216 20 447 116",address:"13 rue Kheireddine Becha, Le Kef",website:"https://www.dar-boumakhlouf.com",map:"Dar Boumakhlouf Le Kef",icon:"🏨"},
+{name:"Andalucia Beach",gov:"بنزرت",phone:"+216 72 421 182",address:"Zone Touristique, Bizerte",website:"https://www.andaluciabeach.net",map:"Andalucia Beach Bizerte",icon:"🏨"},
+{name:"Résidence Mahmoud",gov:"نابل",phone:"+216 72 283 888",address:"72 Avenue des Nations Unies, Hammamet",website:"",map:"Residence Mahmoud Hammamet",icon:"🏨"}
+];
+
+const restaurants=[
+{name:"Dar Zarrouk",gov:"تونس",phone:"+216 71 740 591",address:"Rue Hédi Zarrouk, Sidi Bou Saïd",map:"Dar Zarrouk Sidi Bou Said",icon:"🍽️"},
+{name:"Aux Bon Vieux Temps",gov:"تونس",phone:"+216 71 744 788",address:"56, Hédi Zarrouk, Sidi Bou Saïd",map:"Aux Bon Vieux Temps Sidi Bou Said",icon:"🍽️"},
+{name:"Dar El Jeld",gov:"تونس",phone:"+216 71 560 916",address:"5-10 Rue Dar El Jeld, Tunis",map:"Dar El Jeld Restaurant Tunis",icon:"🍽️"}
+];
+
+const words={
+ar:{tag:"دليلك السياحي الشامل لاكتشاف تونس على شبكة Pi",welcome:"اكتشف تونس ولاية بعد ولاية",intro:"ابحث عن الوجهات السياحية والنزل والمطاعم. اضغط على زر الخريطة لمعرفة الموقع، أو اتصل بالنزل مباشرة.",places:"الأماكن السياحية",hotels:"النزل والفنادق",restaurants:"المطاعم",search:"ابحث بالاسم أو الولاية...",allGov:"كل الولايات",allCat:"كل الأصناف",beach:"الشواطئ",history:"المعالم التاريخية",nature:"الطبيعة",city:"المدن والوجهات",map:"الخريطة",call:"اتصال",website:"الموقع الرسمي",empty:"لا توجد نتائج مطابقة.",dataTitle:"سياسة الخصوصية ودقة البيانات",dataText:"يستخدم هذا التطبيق حزمة Pi SDK للمصادقة الآمنة وإتمام المعاملات بعملة Pi حصرياً. الصور المعروضة للمعالم مرخصة من ويكيميديا كومنز.",footer:"اكتشف تونس، ولاية بعد ولاية.",count:"عدد النتائج:",address:"العنوان:",phone:"الهاتف:",loginBtn:"π تسجيل الدخول بـ Pi",adBtn:"📺 شاهد إعلاناً لدعم التطبيق",vipBtn:"⭐ فتح الدليل الشامل (1 Pi)"},
+fr:{tag:"Votre guide touristique de la Tunisie sur Pi Network",welcome:"Découvrez la Tunisie, région par région",intro:"Recherchez des destinations, hôtels et restaurants. Ouvrez la carte ou appelez directement.",places:"Sites touristiques",hotels:"Hôtels",restaurants:"Restaurants",search:"Rechercher un lieu ou gouvernorat...",allGov:"Tous les gouvernorats",allCat:"Toutes les catégories",beach:"Plages",history:"Sites historiques",nature:"Nature",city:"Villes et destinations",map:"Carte",call:"Appeler",website:"Site officiel",empty:"Aucun résultat.",dataTitle:"Confidentialité et précision des données",dataText:"Cette application utilise le SDK Pi pour une authentification sécurisée et les paiements exclusivement en Pi. Photos des sites sous licence Wikimedia Commons.",footer:"Découvrez la Tunisie, région par région.",count:"Résultats :",address:"Adresse :",phone:"Téléphone :",loginBtn:"π Connexion Pi",adBtn:"📺 Regarder une pub",vipBtn:"⭐ Guide VIP (1 Pi)"},
+en:{tag:"Your Tunisia travel guide on Pi Network",welcome:"Discover Tunisia, governorate by governorate",intro:"Search destinations, hotels and restaurants. Open the map or call directly.",places:"Tourist places",hotels:"Hotels",restaurants:"Restaurants",search:"Search by place or governorate...",allGov:"All governorates",allCat:"All categories",beach:"Beaches",history:"Historical sites",nature:"Nature",city:"Cities and destinations",map:"Map",call:"Call",website:"Official website",empty:"No matching results.",dataTitle:"Privacy & Data Accuracy",dataText:"This app uses Pi SDK for secure authentication and payments exclusively in Pi. Landmark photos are licensed via Wikimedia Commons.",footer:"Discover Tunisia, one governorate at a time.",count:"Results:",address:"Address:",phone:"Phone:",loginBtn:"π Login with Pi",adBtn:"📺 Watch Ad",vipBtn:"⭐ Unlock VIP (1 Pi)"}
+};
+
+let lang="ar",section="places";
+function T(){return words[lang]}
+function setLang(l){
+  lang=l;
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==="ar"?"rtl":"ltr";
+  document.getElementById("tagline").textContent=T().tag;
+  document.getElementById("welcome").textContent=T().welcome;
+  document.getElementById("introText").textContent=T().intro;
+  document.getElementById("search").placeholder=T().search;
+  document.getElementById("dataTitle").textContent=T().dataTitle;
+  document.getElementById("dataText").textContent=T().dataText;
+  document.getElementById("footerText").textContent=T().footer;
+  if(!piUser) document.getElementById("piLoginBtn").textContent=T().loginBtn;
+  document.getElementById("watchAdBtn").textContent=T().adBtn;
+  document.getElementById("vipBtn").textContent=T().vipBtn;
+  fillFilters();render();
+}
+function setSection(s){
+  section=s;
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(s==="places"?"tabPlaces":s==="hotels"?"tabHotels":"tabRestaurants").classList.add("active");
+  fillFilters();render();
+}
+function fillFilters(){
+  let g=document.getElementById("gov"),c=document.getElementById("cat"),oldg=g.value,oldc=c.value;
+  g.innerHTML="";
+  let o=document.createElement("option");o.value="";o.textContent=T().allGov;g.appendChild(o);
+  govs.forEach(x=>{let a=document.createElement("option");a.value=x;a.textContent=x;g.appendChild(a)});
+  g.value=oldg;
+  c.innerHTML="";
+  let cats=section==="places"?[["",T().allCat],["beach",T().beach],["history",T().history],["nature",T().nature],["city",T().city]]:[["",T().allCat]];
+  cats.forEach(([v,n])=>{let a=document.createElement("option");a.value=v;a.textContent=n;c.appendChild(a)});
+  c.value=oldc;
+  document.getElementById("sectionTitle").textContent=T()[section];
+}
+function render(){
+  let data=section==="places"?places:section==="hotels"?hotels:restaurants;
+  let q=document.getElementById("search").value.trim().toLocaleLowerCase(),g=document.getElementById("gov").value,c=document.getElementById("cat").value;
+  let list=data.filter(x=>(!g||x.gov===g)&&(!c||x.cat===c)&&(!q||(x.name+" "+x.gov+" "+(x.desc||"")+" "+(x.address||"")).toLocaleLowerCase().includes(q)));
+  let root=document.getElementById("cards");root.innerHTML="";
+  document.getElementById("count").textContent=T().count+" "+list.length;
+  if(!list.length){let e=document.createElement("div");e.className="empty";e.textContent=T().empty;root.appendChild(e);return}
+  list.forEach(x=>{
+    let card=document.createElement("article");card.className="card";
+    if(x.img){
+      let img=document.createElement("img");
+      img.src=x.img;img.alt=x.name;img.loading="lazy";
+      img.onerror=()=>{img.replaceWith(createPlaceholder(x.gov,"🏛️"))};
+      card.appendChild(img);
+    } else {
+      card.appendChild(createPlaceholder(x.gov, x.icon || "🏨"));
+    }
+    let body=document.createElement("div");body.className="card-body";
+    let topDiv=document.createElement("div");
+    let h=document.createElement("h3");h.textContent=x.name;
+    let meta=document.createElement("div");meta.className="small";meta.textContent=x.gov;
+    let p=document.createElement("p");p.textContent=x.desc||((T().address)+" "+x.address);
+    topDiv.append(h,meta,p);
+    if(x.phone){let phone=document.createElement("p");phone.textContent=T().phone+" "+x.phone;topDiv.appendChild(phone)}
+    if(x.address && x.desc){let ad=document.createElement("p");ad.textContent=T().address+" "+x.address;topDiv.appendChild(ad)}
+    let actions=document.createElement("div");actions.className="actions";
+    let map=document.createElement("a");map.className="link";map.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.map||x.name+" "+x.gov+" Tunisia");map.target="_blank";map.rel="noopener";map.textContent=T().map;actions.appendChild(map);
+    if(x.phone){let call=document.createElement("a");call.className="link call";call.href="tel:"+x.phone.replace(/[^+0-9]/g,"");call.textContent=T().call;actions.appendChild(call)}
+    if(x.website){let web=document.createElement("a");web.className="link";web.href=x.website;web.target="_blank";web.rel="noopener";web.textContent=T().website;actions.appendChild(web)}
+    body.append(topDiv,actions);card.appendChild(body);root.appendChild(card);
+  });
+}
+function createPlaceholder(gov, icon){
+  let div=document.createElement("div");div.className="card-placeholder";
+  div.innerHTML=`<div>${icon}</div><span>${gov}</span>`;
+  return div;
+}
+fillFilters();render();
+</script>
+</body>
+</html>
