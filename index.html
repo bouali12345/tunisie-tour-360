@@ -238,7 +238,6 @@ function setLang(l){
   document.documentElement.lang=l;
   document.documentElement.dir=l==="ar"?"rtl":"ltr";
   
-  // تحديث النصوص العامة في الواجهة
   document.getElementById("tagline").textContent=T().tag;
   document.getElementById("welcome").textContent=T().welcome;
   document.getElementById("introText").textContent=T().intro;
@@ -251,7 +250,6 @@ function setLang(l){
   document.getElementById("watchAdBtn").textContent=T().adBtn;
   document.getElementById("vipBtn").textContent=T().vipBtn;
 
-  // تحديث تسميات أزرار التبويبات العلوية فوراً
   document.getElementById("tabPlaces").textContent=T().places;
   document.getElementById("tabHotels").textContent=T().hotels;
   document.getElementById("tabRestaurants").textContent=T().restaurants;
@@ -309,7 +307,7 @@ function render(){
     if(x.phone){let phone=document.createElement("p");phone.textContent=T().phone+" "+x.phone;topDiv.appendChild(phone)}
     if(x.address && x.desc){let ad=document.createElement("p");ad.textContent=T().address+" "+x.address;topDiv.appendChild(ad)}
     let actions=document.createElement("div");actions.className="actions";
-    let map=document.createElement("a");map.className="link";map.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.map||x.name+" "+x.gov+" Tunisia");map.target="_blank";map.rel="noopener";map.textContent=T().map;actions.appendChild(map);
+    let map=document.createElement("a");map.className="link";map.href="https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.map||x.name+" "+x.gov+" Tunisia");map.target="_blank";map.rel="noopener";map.textContent=T().map;actions.export=map;actions.appendChild(map);
     if(x.phone){let call=document.createElement("a");call.className="link call";call.href="tel:"+x.phone.replace(/[^+0-9]/g,"");call.textContent=T().call;actions.appendChild(call)}
     if(x.website){let web=document.createElement("a");web.className="link";web.href=x.website;web.target="_blank";web.rel="noopener";web.textContent=T().website;actions.appendChild(web)}
     body.append(topDiv,actions);card.appendChild(body);root.appendChild(card);
